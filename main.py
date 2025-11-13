@@ -5,11 +5,6 @@ from datetime import datetime, date, timedelta
 from typing import List, Optional, Tuple, Dict, Callable
 import re
 
-
-# =========================
-# 1) Модельні класи
-# =========================
-
 class Field:
     def __init__(self, value):
         self.value = value
@@ -17,10 +12,8 @@ class Field:
     def __str__(self) -> str:
         return str(self.value)
 
-
 class Name(Field):
     pass
-
 
 class Phone(Field):
     """Телефон рівно з 10 цифр."""
@@ -30,7 +23,6 @@ class Phone(Field):
             raise ValueError("Phone must contain exactly 10 digits")
         super().__init__(digits)
 
-
 class Birthday(Field):
     """Дата народження у форматі DD.MM.YYYY"""
     def __init__(self, value: str):
@@ -39,7 +31,6 @@ class Birthday(Field):
             super().__init__(dt)
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")
-
 
 class Record:
     def __init__(self, name: str):
@@ -67,7 +58,6 @@ class Record:
     def __str__(self):
         b = self.birthday.value.strftime("%d.%m.%Y") if self.birthday else "—"
         return f"{self.name.value}: {self.phones_str()} | birthday: {b}"
-
 
 class AddressBook(UserDict):
     def add_record(self, record: Record) -> None:
@@ -109,11 +99,6 @@ class AddressBook(UserDict):
             per_day[k].sort(key=lambda s: s.lower())
         return per_day
 
-
-# =========================
-# 2) Інфраструктура CLI
-# =========================
-
 def input_error(func: Callable) -> Callable:
     def wrapper(*args, **kwargs):
         try:
@@ -135,10 +120,6 @@ def parse_input(user_input: str) -> Tuple[str, List[str]]:
     args = parts[1:]
     return command, args
 
-
-# =========================
-# 3) Обробники команд
-# =========================
 
 @input_error
 def add_contact(args: List[str], book: AddressBook) -> str:
@@ -233,11 +214,6 @@ def show_help() -> str:
         "close / exit": "Вийти з програми.",
     }
     return "\n".join(f"{cmd}: {desc}" for cmd, desc in commands.items())
-
-
-# =========================
-# 4) Головний цикл
-# =========================
 
 def main():
     book = AddressBook()
